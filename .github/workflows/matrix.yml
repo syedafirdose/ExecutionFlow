@@ -3,11 +3,17 @@ on:
   push:
 jobs:
   build:
+    continue-on-error: true
     strategy:
       matrix:
         node-version: [12, 14, 16]
         operating-system: [ubuntu-latest, windows-latest]
-
+        include: 
+          - node-version: 18
+            operating-system: ubuntu-latest
+        exclude:
+          - node-version: 12
+            operating-system: windows-latest
     runs-on: ${{ matrix.operating-system }} # this will tell to run muultiple times with diff operating systems, parallel
     steps:
       - name: Get code
