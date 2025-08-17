@@ -1,24 +1,25 @@
-name: Website Deployment
+name: Matrix Demo
 on:
   push:
-    branches:
-      - main
 jobs:
-  lint:
-    runs-on: ubuntu-latest
+  build:
+    strategy:
+      matrix:
+        node-version: [12, 14, 16]
+        operating-system: [ubuntu-latest, windows-latest]
+
+    runs-on: ${{ matrix.operating-system }} # this will tell to run muultiple times with diff operating systems, parallel
     steps:
       - name: Get code
         uses: actions/checkout@v3
-      - name: Cache dependencies
-        id: cache
-        uses: actions/cache@v3
+      - name: Install NodeJS
+        uses: actions/setup-node@v3
         with:
-          path: ~/.npm
-          key: deps-node-modules-${{ hashFiles('**/package-lock.json') }}
+          node-version: ${{ matrix.node-version }}  
       - name: Install dependencies
         run: npm ci
-      - name: Lint code
-        run: npm run lint
+      - name: Build Project
+        run: npm run build
   test:
     runs-on: ubuntu-latest
     steps:
